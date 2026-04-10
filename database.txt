@@ -1,0 +1,15 @@
+# Simple Text Database
+# Format: name,description
+# Each line represents one record
+
+name,description
+Apple,A sweet red or green fruit that grows on trees
+Banana,A yellow tropical fruit that's curved and soft
+Coffee,A dark beverage made from roasted coffee beans
+Laptop,A portable computer for work and entertainment
+Book,A collection of printed pages bound together for reading
+Guitar,A stringed musical instrument played by strumming or plucking
+Pizza,An Italian dish with dough, sauce, cheese and toppings
+Ocean,A large body of salt water that covers most of Earth
+Mountain,A large natural elevation of the earth's surface
+Sunshine,Bright light and warmth from the sun
