@@ -1,0 +1,12 @@
+#!/bin/zsh
+set -euo pipefail
+
+SCRIPT_DIR="${0:A:h}"
+PYTHON="${PYTHON:-python3}"
+
+if ! "$PYTHON" -c "import huckleberry_api, certifi" 2>/dev/null; then
+  echo "Installing Python dependencies..."
+  "$PYTHON" -m pip install --user huckleberry-api certifi
+fi
+
+exec "$PYTHON" "$SCRIPT_DIR/sync_nanny_huckleberry.py" "$@"
