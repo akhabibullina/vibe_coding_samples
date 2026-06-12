@@ -1,0 +1,76 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"PreToolUse\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"PostToolUse\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"UserPromptSubmit\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"SessionStart\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"SessionEnd\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"Stop\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '. + {event: \"Notification\"}' >> .claude/logs/events.jsonl"
+          }
+        ]
+      }
+    ]
+  }
+}
