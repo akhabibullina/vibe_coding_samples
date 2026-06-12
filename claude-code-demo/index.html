@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A friendly, plain-language introduction to artificial intelligence: what it is, how it works, and where you already encounter it every day.">
 <title>Learn AI — A friendly introduction</title>
 <style>
   :root {
@@ -15,6 +16,11 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 
   body {
     font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -219,12 +225,23 @@
     border-bottom: 1px solid var(--border);
     padding: 22px 0;
   }
-  .faq-item h3 {
+  .faq-item summary {
     font-size: 1.1rem;
-    margin-bottom: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
   }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: "+";
+    float: right;
+    color: var(--soft);
+    font-weight: 400;
+  }
+  .faq-item[open] summary::after { content: "−"; }
   .faq-item p {
     color: var(--soft);
+    margin-top: 10px;
   }
 
   /* Footer */
@@ -325,25 +342,25 @@
       <p class="section-intro">AI is already part of many everyday tools — often without anyone calling attention to it.</p>
       <div class="examples">
         <div class="example">
-          <div class="icon">📧</div>
+          <div class="icon" aria-hidden="true">📧</div>
           <h3>Email filters</h3>
           <p>Sorting spam from your inbox by recognizing patterns common to unwanted messages.</p>
           <a class="learn-more" href="#">Learn more</a>
         </div>
         <div class="example">
-          <div class="icon">🎙️</div>
+          <div class="icon" aria-hidden="true">🎙️</div>
           <h3>Voice assistants</h3>
           <p>Turning spoken words into text and figuring out what you're asking for.</p>
           <a class="learn-more" href="#">Learn more</a>
         </div>
         <div class="example">
-          <div class="icon">🎬</div>
+          <div class="icon" aria-hidden="true">🎬</div>
           <h3>Streaming recommendations</h3>
           <p>Suggesting shows or songs based on what you and similar people have enjoyed before.</p>
           <a class="learn-more" href="#">Learn more</a>
         </div>
         <div class="example">
-          <div class="icon">📷</div>
+          <div class="icon" aria-hidden="true">📷</div>
           <h3>Photo organizing</h3>
           <p>Grouping pictures by recognizing faces, places, and objects automatically.</p>
           <a class="learn-more" href="#">Learn more</a>
@@ -355,22 +372,22 @@
   <section id="faq">
     <div class="container">
       <h2 class="section-title">Common questions</h2>
-      <div class="faq-item">
-        <h3>Is AI the same as a robot?</h3>
+      <details class="faq-item">
+        <summary>Is AI the same as a robot?</summary>
         <p>No. AI is software — the "thinking" part. A robot is hardware that AI can sometimes help control, but most AI exists only as programs running on computers.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Does AI understand things the way people do?</h3>
+      </details>
+      <details class="faq-item">
+        <summary>Does AI understand things the way people do?</summary>
         <p>Not really. AI finds patterns in data very effectively, but it doesn't have feelings, beliefs, or awareness the way humans do.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Is AI going to replace my job?</h3>
+      </details>
+      <details class="faq-item">
+        <summary>Is AI going to replace my job?</summary>
         <p>AI is best at automating repetitive tasks, but most jobs involve judgment, creativity, and human connection that AI can support but not replace.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Do I need to be good at math to understand AI?</h3>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to be good at math to understand AI?</summary>
         <p>Not at all. You can understand what AI does and how it affects your life without ever writing a line of code or solving an equation.</p>
-      </div>
+      </details>
     </div>
   </section>
 
