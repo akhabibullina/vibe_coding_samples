@@ -1,0 +1,51 @@
+"""
+Captioning agent: takes a learning video and generates a plain-text transcript.
+
+Usage:
+    python caption_agent.py path/to/video.mp4
+
+Requirements:
+    pip install openai-whisper
+    ffmpeg must be installed and on your PATH (used by whisper to extract audio)
+
+Output:
+    Writes a .txt file next to the input video with the same base name,
+    e.g. "video.mp4" -> "video.txt"
+"""
+
+import sys
+import os
+import whisper
+
+
+def generate_transcript(video_path: str, model_name: str = "base") -> str:
+    if not os.path.exists(video_path):
+        raise FileNotFoundError(f"Video file not found: {video_path}")
+
+    print(f"Loading Whisper model '{model_name}'...")
+    model = whisper.load_model(model_name)
+
+    print(f"Transcribing '{video_path}'... (this may take a while)")
+    result = model.transcribe(video_path)
+
+    transcript = result["text"].strip()
+
+    base, _ = os.path.splitext(video_path)
+    output_path = f"{base}.txt"
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(transcript)
+
+    print(f"Transcript saved to: {output_path}")
+    return output_path
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python caption_agent.py path/to/video.mp4 [model_name]")
+        sys.exit(1)
+
+    video_path = sys.argv[1]
+    model_name = sys.argv[2] if len(sys.argv) > 2 else "base"
+
+    generate_transcript(video_path, model_name)
