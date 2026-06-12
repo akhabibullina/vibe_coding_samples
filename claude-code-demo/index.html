@@ -6,12 +6,12 @@
 <title>Learn AI — A friendly introduction</title>
 <style>
   :root {
-    --bg: #FAF9F5;
-    --ink: #1A1A18;
-    --soft: #6B6B63;
-    --accent: #D97757;
-    --card: #F0EEE6;
-    --border: #E3E1D9;
+    --bg: #FFFFFF;
+    --ink: #0D0D0D;
+    --soft: #676767;
+    --accent: #0D0D0D;
+    --card: #F7F7F8;
+    --border: #E5E5E5;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,9 +24,10 @@
   }
 
   h1, h2, h3 {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
     font-weight: 600;
     line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
   .container {
@@ -46,9 +47,9 @@
     align-items: center;
   }
   .logo {
-    font-family: Georgia, serif;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
     font-size: 1.3rem;
-    font-weight: 600;
+    font-weight: 700;
   }
   .logo span { color: var(--accent); }
   nav ul {
@@ -65,17 +66,21 @@
 
   /* Hero */
   .hero {
-    padding: 96px 0 80px;
+    padding: 110px 0 90px;
     text-align: center;
+    background: radial-gradient(circle at 30% 20%, #c7c5fb 0%, #a5b4fc 25%, #818cf8 45%, #e0e7ff 75%, #ffffff 100%);
+    border-radius: 0 0 32px 32px;
   }
   .hero h1 {
-    font-size: 3rem;
-    max-width: 640px;
+    font-size: 3.4rem;
+    font-weight: 700;
+    max-width: 700px;
     margin: 0 auto 20px;
+    letter-spacing: -0.02em;
   }
   .hero p {
-    font-size: 1.15rem;
-    color: var(--soft);
+    font-size: 1.2rem;
+    color: #3f3f46;
     max-width: 540px;
     margin: 0 auto 36px;
   }
@@ -84,13 +89,34 @@
     background: var(--accent);
     color: #fff;
     padding: 14px 32px;
-    border-radius: 6px;
+    border-radius: 999px;
     text-decoration: none;
     font-size: 1rem;
     font-weight: 600;
     transition: opacity 0.15s ease;
   }
   .btn:hover { opacity: 0.88; }
+
+  /* Trusted strip */
+  .trusted {
+    text-align: center;
+    padding: 48px 24px;
+  }
+  .trusted p {
+    color: var(--soft);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+  .trusted-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #A0A0A0;
+  }
 
   /* Sections */
   section {
@@ -118,7 +144,7 @@
   .step {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 16px;
     padding: 28px;
   }
   .step .label {
@@ -147,8 +173,20 @@
   .example {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 16px;
     padding: 24px;
+  }
+  .example .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
   }
   .example h3 {
     font-size: 1.05rem;
@@ -157,6 +195,23 @@
   .example p {
     color: var(--soft);
     font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+  .example .learn-more {
+    display: block;
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .example .learn-more:hover {
+    background: var(--card);
   }
 
   /* FAQ */
@@ -217,6 +272,17 @@
     </div>
   </header>
 
+  <div class="trusted">
+    <p>Trusted by curious learners everywhere</p>
+    <div class="trusted-logos">
+      <span>Acme Co</span>
+      <span>Globex</span>
+      <span>Initech</span>
+      <span>Umbrella</span>
+      <span>Hooli</span>
+    </div>
+  </div>
+
   <section id="what">
     <div class="container">
       <h2 class="section-title">What is AI, really?</h2>
@@ -259,20 +325,28 @@
       <p class="section-intro">AI is already part of many everyday tools — often without anyone calling attention to it.</p>
       <div class="examples">
         <div class="example">
+          <div class="icon">📧</div>
           <h3>Email filters</h3>
           <p>Sorting spam from your inbox by recognizing patterns common to unwanted messages.</p>
+          <a class="learn-more" href="#">Learn more</a>
         </div>
         <div class="example">
+          <div class="icon">🎙️</div>
           <h3>Voice assistants</h3>
           <p>Turning spoken words into text and figuring out what you're asking for.</p>
+          <a class="learn-more" href="#">Learn more</a>
         </div>
         <div class="example">
+          <div class="icon">🎬</div>
           <h3>Streaming recommendations</h3>
           <p>Suggesting shows or songs based on what you and similar people have enjoyed before.</p>
+          <a class="learn-more" href="#">Learn more</a>
         </div>
         <div class="example">
+          <div class="icon">📷</div>
           <h3>Photo organizing</h3>
           <p>Grouping pictures by recognizing faces, places, and objects automatically.</p>
+          <a class="learn-more" href="#">Learn more</a>
         </div>
       </div>
     </div>
