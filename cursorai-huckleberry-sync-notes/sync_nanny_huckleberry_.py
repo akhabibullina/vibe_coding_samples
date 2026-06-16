@@ -45,6 +45,30 @@ TIME_PATTERN = re.compile(
 DATE_PATTERN = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{2,4})$")
 SYNC_MARKER = re.compile(r"^Synced to Huckleberry on ", re.IGNORECASE)
 
+# Diaper: matches "Diaper changed @…", "Changed diaper @…", "Diaper change @…"
+DIAPER_RE = re.compile(
+    r"(?:diaper\s*change[d]?|changed\s+diaper)\s*@(?P<time>[^(\n]+)(?:\((?P<notes>[^)]+)\))?",
+    re.IGNORECASE,
+)
+# Breast fed: optional end time for ranges like @3:31pm-3:35pm
+BREAST_RE = re.compile(
+    r"breast\s*fed\s*@(?P<time>\d{1,2}(?::\d{2})?\s*(?:am|pm))"
+    r"(?:\s*-\s*(?P<end_time>\d{1,2}(?::\d{2})?\s*(?:am|pm)))?"
+    r"(?:\s*\((?P<notes>[^)]+)\))?",
+    re.IGNORECASE,
+)
+# Bottle fed: explicit "bottle fed @Xpm" — requires am/pm so bare "5:41" is skipped
+BOTTLE_RE = re.compile(
+    r"bottle\s*fed\s*@(?P<time>\d{1,2}(?::\d{2})?\s*(?:am|pm))"
+    r"(?:\s*\((?P<notes>[^)]+)\))?",
+    re.IGNORECASE,
+)
+# Legacy "fed @Xpm" (e.g. "Diana fed @12:46pm finished bottle") — requires am/pm
+FED_RE = re.compile(
+    r"(?<![^\s])fed\s*@(?P<time>\d{1,2}(?::\d{2})?\s*(?:am|pm))",
+    re.IGNORECASE,
+)
+
 
 @dataclass
 class ParsedDay:
@@ -155,8 +179,10 @@ def infer_diaper_mode(text: str) -> str:
 
 
 def parse_note_lines(lines: list[str], requested_date: date | None, tz: ZoneInfo) -> ParsedDay:
-    log_date = requested_date or date.today()
-    parsed = ParsedDay(log_date=log_date)
+    # Don't pre-set log_date to today — let the first date line in the note set it,
+    # so we don't mistake today's date for a "different date" and stop immediately.
+    log_date: date | None = None
+    parsed = ParsedDay(log_date=date.today())
     section = ""
 
     for line in lines:
@@ -164,14 +190,23 @@ def parse_note_lines(lines: list[str], requested_date: date | None, tz: ZoneInfo
             section = line.lower()
             continue
 
-        note_date = parse_note_date(line, log_date)
+        note_date = parse_note_date(line, log_date or date.today())
         if note_date:
-            log_date = note_date
-            parsed.log_date = log_date
+            if log_date is None:
+                # First date seen — lock onto it (honour --date if given)
+                log_date = requested_date or note_date
+                parsed.log_date = log_date
+            else:
+                # Second (older) date section — stop; rest belongs to a prior day
+                break
             continue
+
+        if log_date is None:
+            continue  # Haven't seen a date line yet; skip header lines
 
         lowered = line.lower()
 
+        # Sleep
         sleep_match = re.search(
             r"(?:fell asleep|nap(?:\s+\d+)?|sleep)\s*(?:@|~)?\s*(.+)",
             line,
@@ -189,25 +224,27 @@ def parse_note_lines(lines: list[str], requested_date: date | None, tz: ZoneInfo
                 parsed.sleep.append({"start": start, "end": end, "notes": body})
             continue
 
-        breast_match = re.search(
-            r"breast\s*fed\s*@(?P<time>[^(\n]+)(?:\((?P<notes>[^)]+)\))?",
-            line,
-            re.IGNORECASE,
-        )
+        # Breast fed (checked before generic "fed" to avoid double-matching)
+        breast_match = BREAST_RE.search(line)
         if breast_match:
             start = parse_clock_time(breast_match.group("time"), log_date, tz)
             notes = (breast_match.group("notes") or "").strip()
             parsed.breast.append({"start": start, "notes": notes or line})
             continue
 
-        bottle_match = re.search(
-            r"(?<!\bbreast\s)fed\s*@(?P<time>[^(\n]+)(?:\((?P<notes>[^)]+)\))?",
-            line,
-            re.IGNORECASE,
-        )
-        if bottle_match and "breast" not in lowered.split("@", 1)[0]:
+        # Bottle fed — explicit "bottle fed @Xpm"
+        bottle_match = BOTTLE_RE.search(line)
+        if bottle_match:
             start = parse_clock_time(bottle_match.group("time"), log_date, tz)
-            notes = (bottle_match.group("notes") or line.split("@", 1)[-1]).strip()
+            notes = (bottle_match.group("notes") or "").strip() or "bottle"
+            parsed.bottle.append({"start": start, "notes": notes})
+            continue
+
+        # Legacy "fed @Xpm" (e.g. "Diana fed @12:46pm finished bottle")
+        fed_match = FED_RE.search(line)
+        if fed_match and "breast" not in lowered.split("@", 1)[0]:
+            start = parse_clock_time(fed_match.group("time"), log_date, tz)
+            notes = line.split("@", 1)[-1].strip()
             parsed.bottle.append({"start": start, "notes": notes})
             continue
 
@@ -218,11 +255,8 @@ def parse_note_lines(lines: list[str], requested_date: date | None, tz: ZoneInfo
                 parsed.bottle.append({"start": start, "notes": body})
             continue
 
-        diaper_match = re.search(
-            r"diaper(?:\s+change)?\s*@(?P<time>[^(\n]+)(?:\((?P<notes>[^)]+)\))?",
-            line,
-            re.IGNORECASE,
-        )
+        # Diaper — handles both "Diaper changed @…" and "Changed diaper @…"
+        diaper_match = DIAPER_RE.search(line)
         if diaper_match:
             start = parse_clock_time(diaper_match.group("time"), log_date, tz)
             notes = (diaper_match.group("notes") or "Diaper change").strip()
